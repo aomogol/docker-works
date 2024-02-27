@@ -1,0 +1,65 @@
+storage:
+  type: postgres
+  path: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@192.168.30.240:5432/${POSTGRES_DB}?sslmode=disable"
+
+alerting:
+  discord:
+    webhook-url: "https://discord.com/api/webhooks/**********/**********"
+    default-alert:
+      description: "Health Check Failed"
+      send-on-resolved: true
+      failure-threshold: 2
+      success-threshold: 2
+
+endpoint-defaults: &defaults
+  group: External
+  interval: 15s
+  client:
+    timeout: 10s
+  conditions:
+    - "[STATUS] == 200"
+    - "[CERTIFICATE_EXPIRATION] > 48h"
+  alerts:
+    - type: discord
+
+endpoints:
+  - name: shop.technotim.live - HTTP
+    <<: *defaults
+    url: "https://shop.technotim.live"
+
+  - name: technotim.live - HTTP
+    <<: *defaults
+    url: "https://technotim.live"
+
+  - name: links.technotim.live - HTTP
+    <<: *defaults
+    url: "https://links.technotim.live"
+
+  - name: l.technotim.live - HTTP
+    <<: *defaults
+    url: "https://l.technotim.live"
+
+  - name: shop.technotim.live - DNS
+    group: External
+    url: "8.8.8.8" # Address of the DNS server to use
+    interval: 5m
+    dns:
+      query-name: "shop.technotim.live"
+      query-type: "A"
+    conditions:
+      - "[BODY] == 23.227.38.74"
+      - "[DNS_RCODE] == NOERROR"
+
+  - name: shop.technotim.live - Ping
+    group: External
+    url: "icmp://shop.technotim.live"
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: Postgres
+    group: Internal
+    url: "tcp://192.168.30.240:5432"
+    interval: 30s
+    conditions:
+      - "[CONNECTED] == true"
