@@ -16,6 +16,18 @@ endpoints:
     <<: *defaults
     url: "https://divemagazinetr.com"
 
+  - name: alvinapazarlama.com - HTTP
+    <<: *defaults
+    url: "https://alvinapazarlama.com"
+
+  - name: b2plastik.com - HTTP
+    <<: *defaults
+    url: "https://b2plastik.com"
+
+  - name: tokkar.com.tr - HTTP
+    <<: *defaults
+    url: "https://tokkar.com.tr"
+
   - name: divemagazinetr.com - DNS
     group: External
     url: "8.8.8.8" # Address of the DNS server to use

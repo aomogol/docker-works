@@ -1,13 +1,33 @@
 version: "3.9"
 services:
+  postgres:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=gatus
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+    networks:
+      - web
+
   gatus:
     image: twinproduction/gatus:latest
     restart: always
     ports:
       - "8081:8080"
     environment:
-      - POSTGRES_USER=gatus_uptime_user # postgres user with access to the database
-      - POSTGRES_PASSWORD=gatuspassword # postgres user password
-      - POSTGRES_DB=gatus_uptime # this should be the name of your postgres database
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=gatus
     volumes:
       - ./config:/config
+    networks:
+      - web
+    depends_on:
+      - postgres
+
+networks:
+  web:
